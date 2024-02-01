@@ -24,6 +24,10 @@ public class Robot extends TimedRobot {
   private PilotController m_controller;
   private Launcher m_launcher;
   private Intake m_intake;
+  private Indexer m_indexer;
+
+  private boolean m_currentlyLaunching;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -39,6 +43,9 @@ public class Robot extends TimedRobot {
     m_controller = new PilotController();
     m_launcher = new Launcher();
     m_intake = new Intake();
+    m_indexer = new Indexer();
+
+    m_currentlyLaunching = false;
 
     m_drivetrain.initDrivetrain();
   }
@@ -101,6 +108,8 @@ public class Robot extends TimedRobot {
     boolean ampLauncherOn = false;
     boolean speakerLauncherOn = false;
     boolean intakeOn = false;
+    boolean haveNote = false;
+    boolean expelOn = false;
 
     double leftLauncherAmpSpeed = 0.30;
     double rightLauncherAmpSpeed = 0.30;
@@ -118,36 +127,89 @@ public class Robot extends TimedRobot {
     speakerLauncherOn = m_controller.getSpeakerLaunchButton();
     desiredDirection = m_controller.getPilotChangeControls();
     intakeOn = m_controller.getIntakeButton();
+    haveNote = m_indexer.readIndexSensor();
+    expelOn = m_controller.getExpelButton();
 
     m_drivetrain.setDesiredDirection(desiredDirection);
 
     m_drivetrain.arcadeDrive(curSpeed, curTurn);
 
-    /**
-     * If ampLauncherOn is true, set the speed of the launch motors to amp speed.
-     * Else if speakerLauncherOn is true, set the speed of the launch motors to speaker speed.
-     * If we are not launching, set the speed to 0.
-     */
-    if (ampLauncherOn) {
-      m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
-    }
-    else if(speakerLauncherOn) {
-      m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
-    }
-    else {
-      m_launcher.setSpeed(0.0, 0.0);
-    }
-
-    /**
-     * If intakeOn is true, sets the speed of the intake.
-     * If intakeOn is false, sets the speed to 0.
-     */
-    if (intakeOn) {
-      m_intake.setSpeed(intakeSpeed);
+    if (m_currentlyLaunching) {
+      /**
+       * If we are launching to the amp, set the speed of the launch motors to amp speed and feed the note from indexer.
+       * Else if we are launching to the speaker, set the speed of the launch motors to speaker speed and feed note from indexer.
+       * If we are not launching, set launcher and indexer speed to 0.
+       */
+      if (ampLauncherOn) {
+        m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
+        m_indexer.feedNote();
+      }
+      else if(speakerLauncherOn) {
+        m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
+        m_indexer.feedNote();
+      }
+      else {
+        m_launcher.setSpeed(0.0, 0.0);
+        m_currentlyLaunching = false;
+        m_indexer.stop();
+      }
     }
     else {
-      m_intake.setSpeed(0.0);
+      if (haveNote) {
+        /**
+         * If we are launching to the amp, set the speed of the launch motors to amp speed and feed the note from indexer. m_currentlyLaunching is set to true.
+         * Else if we are launching to the speaker, set the speed of the launch motors to speaker speed and feed note from indexer. m_currentlyLaunching is set to true.
+         * Else if we are expelling, set launcher, index, and intake speeds to expel speeds.
+         * If we are not launching or expelling, set launcher, indexer, and intake speed to 0. m_currentlyLaunching is set to false.
+         */
+        if (ampLauncherOn) {
+          m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
+          m_indexer.feedNote();
+          m_intake.setSpeed(0.0);
+          m_currentlyLaunching = true;
+        }
+        else if(speakerLauncherOn) {
+          m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
+          m_indexer.feedNote();
+          m_intake.setSpeed(0.0);
+          m_currentlyLaunching = true;
+        }
+        else if(expelOn) {
+          m_launcher.setSpeed(-leftLauncherAmpSpeed, -rightLauncherAmpSpeed);
+          m_indexer.expelNote();
+          m_intake.setSpeed(-intakeSpeed);
+        } 
+        else {
+          m_launcher.setSpeed(0.0, 0.0);
+          m_indexer.stop();
+          m_intake.setSpeed(0.0);
+          m_currentlyLaunching = false;
+        }
+      }
+      else{
+        /**
+         * If intakeOn is true, sets the speed of the intake, sets indexer to note loading speed, and sets launcher speed to 0.
+         * Else if we are expelling, set launcher, index, and intake speeds to expel speeds.
+         * If we are not intaking or expelling, sets the launcher, index, and intake speeds to 0.
+         */
+        if (intakeOn) {
+          m_intake.setSpeed(intakeSpeed);
+          m_launcher.setSpeed(0.0, 0.0);
+          m_indexer.loadNote();
+        }
+        else if(expelOn) {
+          m_launcher.setSpeed(-leftLauncherAmpSpeed, -rightLauncherAmpSpeed);
+          m_indexer.expelNote();
+          m_intake.setSpeed(-intakeSpeed);
+        }
+        else {
+          m_intake.setSpeed(0.0);
+          m_indexer.stop();
+          m_launcher.setSpeed(0.0, 0.0);
+        }
+      }
     }
+   
   }
 
   /** This function is called once when the robot is disabled. */

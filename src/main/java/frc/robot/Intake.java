@@ -8,7 +8,7 @@ public class Intake {
 
     Intake() {
         //can ID for the intake is currently set to 19. TODO: update when prototyping
-        m_intake = new TalonSRX(19);
+        m_intake = new TalonSRX(RobotMap.IntakeConstants.INTAKE_CAN_ID);
     }
     
     /**
