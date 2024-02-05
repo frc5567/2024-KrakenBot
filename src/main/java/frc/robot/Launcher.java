@@ -10,10 +10,12 @@ public class Launcher {
     Launcher() {
         //TODO: Can ID for left launcher is currently 17. WILL NEED TO UPDATE.
         m_launcherLeft = new WPI_TalonFX(RobotMap.LauncherConstants.LEFT_LAUNCHER_CAN_ID);
+        m_launcherLeft.setInverted(true);
 
         //TODO: Can ID for right launcher is currently 18. WILL NEED TO UPDATE.
         m_launcherRight = new WPI_TalonFX(RobotMap.LauncherConstants.RIGHT_LAUNCHER_CAN_ID);
-        m_launcherRight.setInverted(true);
+        m_launcherRight.setInverted(false);
+        
     }
 
     /**

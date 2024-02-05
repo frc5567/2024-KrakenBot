@@ -68,6 +68,15 @@ public class Drivetrain {
     }
 
     /**
+     * Method for controlling the drivetrain by using a stick for each side.
+     * @param ls speed for the left side between -1.0 and 1.0.
+     * @param rs speed for the right side between -1.0 and 1.0.
+     */
+    public void tankDrive(double ls, double rs) {
+        m_drive.tankDrive(ls, rs);
+    }
+
+    /**
      * Method used to set motor directions while driving.
      * 
      * @param desiredDirection true represents the initial direction, false represents the reversed controls.
