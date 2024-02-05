@@ -28,6 +28,8 @@ public class Robot extends TimedRobot {
 
   private boolean m_currentlyLaunching;
 
+  private int m_launchCounter = 0;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -48,6 +50,7 @@ public class Robot extends TimedRobot {
     m_currentlyLaunching = false;
 
     m_drivetrain.initDrivetrain();
+    //System.out.print("Robot Init");
   }
 
   /**
@@ -102,8 +105,16 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    //System.out.println("Teleop Periodic");
+
+    // set to false for arcade drive, true for tank drive
+    boolean isTank = false;
+
     double curSpeed = 0.0;
     double curTurn = 0.0;
+
+    double curLT = 0.0;
+    double curRT = 0.0;
 
     boolean ampLauncherOn = false;
     boolean speakerLauncherOn = false;
@@ -111,18 +122,23 @@ public class Robot extends TimedRobot {
     boolean haveNote = false;
     boolean expelOn = false;
 
-    double leftLauncherAmpSpeed = 0.30;
-    double rightLauncherAmpSpeed = 0.30;
+    double leftLauncherAmpSpeed = 0.40;
+    double rightLauncherAmpSpeed = 0.40;
 
-    double leftLauncherSpeakerSpeed = 0.80;
-    double rightLauncherSpeakerSpeed = 0.80;
+    //launcher speeds are offset for more predictable flight pattern
+    double leftLauncherSpeakerSpeed = 0.75;
+    double rightLauncherSpeakerSpeed = 0.95;
 
-    double intakeSpeed = 0.80;
+    double intakeSpeed = 0.50;
     
     PilotController.DesiredDirection desiredDirection = PilotController.DesiredDirection.NoChange;
 
     curSpeed = m_controller.getDriverSpeed();
     curTurn = m_controller.getDriverTurn();
+
+    curLT = -m_controller.getDriverLeftTank();
+    curRT = -m_controller.getDriverRightTank();
+
     ampLauncherOn = m_controller.getAmpLaunchButton();
     speakerLauncherOn = m_controller.getSpeakerLaunchButton();
     desiredDirection = m_controller.getPilotChangeControls();
@@ -131,10 +147,16 @@ public class Robot extends TimedRobot {
     expelOn = m_controller.getExpelButton();
 
     m_drivetrain.setDesiredDirection(desiredDirection);
-
-    m_drivetrain.arcadeDrive(curSpeed, curTurn);
+    if (isTank) {
+      m_drivetrain.tankDrive(curLT, curRT);
+    }
+    else {
+      m_drivetrain.arcadeDrive(curSpeed, curTurn);
+    }
 
     if (m_currentlyLaunching) {
+      //System.out.println("currently launching");
+
       /**
        * If we are launching to the amp, set the speed of the launch motors to amp speed and feed the note from indexer.
        * Else if we are launching to the speaker, set the speed of the launch motors to speaker speed and feed note from indexer.
@@ -145,8 +167,14 @@ public class Robot extends TimedRobot {
         m_indexer.feedNote();
       }
       else if(speakerLauncherOn) {
+        if (++m_launchCounter > 25) {
+          m_indexer.feedNote();
+        }
+        else {
+          m_indexer.stop();
+        }
         m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
-        m_indexer.feedNote();
+
       }
       else {
         m_launcher.setSpeed(0.0, 0.0);
@@ -187,6 +215,8 @@ public class Robot extends TimedRobot {
         }
       }
       else{
+          //System.out.println("Not launching\n");
+
         /**
          * If intakeOn is true, sets the speed of the intake, sets indexer to note loading speed, and sets launcher speed to 0.
          * Else if we are expelling, set launcher, index, and intake speeds to expel speeds.
@@ -196,6 +226,8 @@ public class Robot extends TimedRobot {
           m_intake.setSpeed(intakeSpeed);
           m_launcher.setSpeed(0.0, 0.0);
           m_indexer.loadNote();
+          
+          //System.out.println("Currently intaking");
         }
         else if(expelOn) {
           m_launcher.setSpeed(-leftLauncherAmpSpeed, -rightLauncherAmpSpeed);
@@ -208,6 +240,7 @@ public class Robot extends TimedRobot {
           m_launcher.setSpeed(0.0, 0.0);
         }
       }
+      m_launchCounter = 0;
     }
    
   }

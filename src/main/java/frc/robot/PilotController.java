@@ -11,6 +11,9 @@ public class PilotController {
 
     private SlewRateLimiter m_accelFilter;
 
+    private SlewRateLimiter m_accelLTFilter;
+    private SlewRateLimiter m_accelRTFilter;
+
     /**
      * The possible values for DesiredDirection input.
      */
@@ -26,6 +29,9 @@ public class PilotController {
     public PilotController() {
         m_controller = new XboxController(RobotMap.PilotControllerConstants.XBOX_CONTROLLER_USB_PORT);
         m_accelFilter = new SlewRateLimiter(RobotMap.PilotControllerConstants.ACCEL_SLEW_RATE);
+
+        m_accelLTFilter = new SlewRateLimiter(RobotMap.PilotControllerConstants.ACCEL_SLEW_RATE);
+        m_accelRTFilter = new SlewRateLimiter(RobotMap.PilotControllerConstants.ACCEL_SLEW_RATE);
     }
 
     /**
@@ -36,6 +42,22 @@ public class PilotController {
     public double getDriverSpeed() {
         double speed = m_controller.getRightTriggerAxis() - m_controller.getLeftTriggerAxis();
         speed = m_accelFilter.calculate(speed);
+        return adjustForDeadband(speed);
+    }
+
+    public double getDriverLeftTank() {
+        double speed = m_controller.getLeftY();
+        double squaredInput = speed * speed;
+        squaredInput = Math.copySign(squaredInput, speed);
+        speed = m_accelLTFilter.calculate(squaredInput);
+        return adjustForDeadband(speed);
+    }
+
+    public double getDriverRightTank() {
+        double speed = m_controller.getRightY();
+        double squaredInput = speed * speed;
+        squaredInput = Math.copySign(squaredInput, speed);        
+        speed = m_accelRTFilter.calculate(squaredInput);
         return adjustForDeadband(speed);
     }
     

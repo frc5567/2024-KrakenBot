@@ -47,7 +47,9 @@ public class Indexer {
     public boolean readIndexSensor() {
         boolean haveANote = false;
 
-        haveANote = m_indexSensor.get();
+        haveANote = !m_indexSensor.get();
+
+        //System.out.println("Have a note [" + Boolean.toString(haveANote) + "]");
 
         return haveANote;
     }
