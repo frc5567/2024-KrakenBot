@@ -1,19 +1,19 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 public class Launcher {
-    WPI_TalonFX m_launcherLeft;
-    WPI_TalonFX m_launcherRight;
+    TalonFX m_launcherLeft;
+    TalonFX m_launcherRight;
+
+    final DutyCycleOut m_motorOutput = new DutyCycleOut(0);
 
     Launcher() {
-        //TODO: Can ID for left launcher is currently 17. WILL NEED TO UPDATE.
-        m_launcherLeft = new WPI_TalonFX(RobotMap.LauncherConstants.LEFT_LAUNCHER_CAN_ID);
+        m_launcherLeft = new TalonFX(RobotMap.LauncherConstants.LEFT_LAUNCHER_CAN_ID);
         m_launcherLeft.setInverted(true);
 
-        //TODO: Can ID for right launcher is currently 18. WILL NEED TO UPDATE.
-        m_launcherRight = new WPI_TalonFX(RobotMap.LauncherConstants.RIGHT_LAUNCHER_CAN_ID);
+        m_launcherRight = new TalonFX(RobotMap.LauncherConstants.RIGHT_LAUNCHER_CAN_ID);
         m_launcherRight.setInverted(false);
         
     }
@@ -28,7 +28,7 @@ public class Launcher {
      */
     public void setSpeed(double leftSpeed, double rightSpeed) {
 
-        m_launcherLeft.set(TalonFXControlMode.PercentOutput, leftSpeed);
-        m_launcherRight.set(TalonFXControlMode.PercentOutput, rightSpeed);
+        m_launcherLeft.setControl(m_motorOutput.withOutput(leftSpeed));
+        m_launcherRight.setControl(m_motorOutput.withOutput(rightSpeed));
     }
 }
