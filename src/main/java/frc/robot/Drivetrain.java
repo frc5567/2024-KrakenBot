@@ -1,15 +1,17 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class Drivetrain {
-    private WPI_TalonFX m_leftLeader;
-    private WPI_TalonFX m_rightLeader;
-    private WPI_TalonFX m_leftFollower;
-    private WPI_TalonFX m_rightFollower;
+    private TalonFX m_leftLeader;
+    private TalonFX m_rightLeader;
+    private TalonFX m_leftFollower;
+    private TalonFX m_rightFollower;
 
 
 
@@ -26,13 +28,14 @@ public class Drivetrain {
      * @param pidgey IMU pigeon instance
      */
     public Drivetrain() {
-        m_leftLeader = new WPI_TalonFX(RobotMap.DrivetrainConstants.LEFT_LEADER_CAN_ID);
-        m_rightLeader = new WPI_TalonFX(RobotMap.DrivetrainConstants.RIGHT_LEADER_CAN_ID);
-        m_leftFollower = new WPI_TalonFX(RobotMap.DrivetrainConstants.LEFT_FOLLOWER_CAN_ID);
-        m_rightFollower = new WPI_TalonFX(RobotMap.DrivetrainConstants.RIGHT_FOLLOWER_CAN_ID);
+        m_leftLeader = new TalonFX(RobotMap.DrivetrainConstants.LEFT_LEADER_CAN_ID);
+        m_rightLeader = new TalonFX(RobotMap.DrivetrainConstants.RIGHT_LEADER_CAN_ID);
+        m_leftFollower = new TalonFX(RobotMap.DrivetrainConstants.LEFT_FOLLOWER_CAN_ID);
+        m_rightFollower = new TalonFX(RobotMap.DrivetrainConstants.RIGHT_FOLLOWER_CAN_ID);
         
-        m_leftFollower.follow(m_leftLeader);
-        m_rightFollower.follow(m_rightLeader);
+        // m_follower.setControl(new Follower(m_leader.getDeviceID(), false));
+        m_leftFollower.setControl(new Follower(m_leftLeader.getDeviceID(), false));
+        m_rightFollower.setControl(new Follower(m_rightLeader.getDeviceID(), false));
         
         m_drive = new DifferentialDrive(m_leftLeader, m_rightLeader);
 
@@ -45,10 +48,8 @@ public class Drivetrain {
     public void initDrivetrain() {
  
         m_leftLeader.setInverted(false);
-        m_leftFollower.setInverted(false);
         
         m_rightLeader.setInverted(true);
-        m_rightFollower.setInverted(true);
 
         m_isDrivetrainForward = true;
     }
