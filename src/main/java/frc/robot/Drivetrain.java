@@ -2,8 +2,11 @@ package frc.robot;
 
 
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -33,10 +36,6 @@ public class Drivetrain {
         m_leftFollower = new TalonFX(RobotMap.DrivetrainConstants.LEFT_FOLLOWER_CAN_ID);
         m_rightFollower = new TalonFX(RobotMap.DrivetrainConstants.RIGHT_FOLLOWER_CAN_ID);
         
-        // m_follower.setControl(new Follower(m_leader.getDeviceID(), false));
-        m_leftFollower.setControl(new Follower(m_leftLeader.getDeviceID(), false));
-        m_rightFollower.setControl(new Follower(m_rightLeader.getDeviceID(), false));
-        
         m_drive = new DifferentialDrive(m_leftLeader, m_rightLeader);
 
         m_isDrivetrainForward = true;
@@ -46,10 +45,30 @@ public class Drivetrain {
      * Init function to intialize the Drivetrain in its entirety
      */
     public void initDrivetrain() {
- 
-        m_leftLeader.setInverted(false);
-        
-        m_rightLeader.setInverted(true);
+
+        TalonFXConfiguration leftConfiguration = new TalonFXConfiguration();
+        TalonFXConfiguration rightConfiguration = new TalonFXConfiguration();
+
+        //leftConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        leftConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        rightConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        leftConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        rightConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        //m_leftLeader.setInverted(false);
+        //m_rightLeader.setInverted(true);
+
+        m_leftLeader.getConfigurator().apply(leftConfiguration);
+        m_leftFollower.getConfigurator().apply(leftConfiguration);
+        m_rightLeader.getConfigurator().apply(rightConfiguration);
+        m_rightFollower.getConfigurator().apply(rightConfiguration);
+
+        m_leftFollower.setControl(new Follower(m_leftLeader.getDeviceID(), false));
+        m_rightFollower.setControl(new Follower(m_rightLeader.getDeviceID(), false));
+
+        m_leftLeader.setSafetyEnabled(true);
+        m_rightLeader.setSafetyEnabled(true);
 
         m_isDrivetrainForward = true;
     }
