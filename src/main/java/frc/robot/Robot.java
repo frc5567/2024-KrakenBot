@@ -126,7 +126,7 @@ public class Robot extends TimedRobot {
     double rightLauncherAmpSpeed = 0.40;
 
     //launcher speeds are offset for more predictable flight pattern
-    double leftLauncherSpeakerSpeed = 0.75;
+    double leftLauncherSpeakerSpeed = 0.80;
     double rightLauncherSpeakerSpeed = 0.95;
 
     double intakeSpeed = 0.50;
