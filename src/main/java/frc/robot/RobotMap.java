@@ -79,7 +79,7 @@ public class RobotMap {
         /**
          * Speed set to index motor for feeding note into launcher
          */
-        public static final double FEED_SPEED = 0.8;
+        public static final double FEED_SPEED = 1.0;
     }
 
     /**
