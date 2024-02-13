@@ -109,4 +109,30 @@ public class RobotMap {
          */
         public static final int RIGHT_LAUNCHER_CAN_ID = 18;
     }
+
+    /**
+     * All Climber constants.
+     */
+    public static class ClimberConstants {
+
+        /**
+         * CAN ID of the left climber motor
+         */
+        public static final int LEFT_CLIMBER_CAN_ID = 8;
+
+        /**
+         * CAN ID of the right climber motor
+         */
+        public static final int RIGHT_CLIMBER_CAN_ID = 9;
+
+        /**
+         * Speed set to left climber motor
+         */
+        public static final double LEFT_SPEED = 0.3;
+
+        /**
+         * Speed set to the right climber motor
+         */
+        public static final double RIGHT_SPEED = 0.3;
+    }
 }
