@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
   private Launcher m_launcher;
   private Intake m_intake;
   private Indexer m_indexer;
+  private Climber m_climber;
 
   private boolean m_currentlyLaunching;
 
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
     m_launcher = new Launcher();
     m_intake = new Intake();
     m_indexer = new Indexer();
+    m_climber = new Climber();
 
     m_currentlyLaunching = false;
 
@@ -121,6 +123,8 @@ public class Robot extends TimedRobot {
     boolean intakeOn = false;
     boolean haveNote = false;
     boolean expelOn = false;
+    boolean leftClimberOn = false;
+    boolean rightClimberOn = false;
 
     double leftLauncherAmpSpeed = 0.40;
     double rightLauncherAmpSpeed = 0.40;
@@ -130,6 +134,9 @@ public class Robot extends TimedRobot {
     double rightLauncherSpeakerSpeed = 0.95;
 
     double intakeSpeed = 0.50;
+
+    double leftClimberSpeed = RobotMap.ClimberConstants.LEFT_SPEED;
+    double rightClimberSpeed = RobotMap.ClimberConstants.RIGHT_SPEED;
     
     PilotController.DesiredDirection desiredDirection = PilotController.DesiredDirection.NoChange;
 
@@ -145,6 +152,8 @@ public class Robot extends TimedRobot {
     intakeOn = m_controller.getIntakeButton();
     haveNote = m_indexer.readIndexSensor();
     expelOn = m_controller.getExpelButton();
+    leftClimberOn = m_controller.getLeftClimbButton();
+    rightClimberOn = m_controller.getRightClimbButton();
 
     m_drivetrain.setDesiredDirection(desiredDirection);
     if (isTank) {
@@ -152,6 +161,20 @@ public class Robot extends TimedRobot {
     }
     else {
       m_drivetrain.arcadeDrive(curSpeed, curTurn);
+    }
+
+    if (leftClimberOn) {
+      m_climber.setLeftSpeed(leftClimberSpeed);
+    }
+    else {
+      m_climber.setLeftSpeed(0.0);
+    }
+
+    if (rightClimberOn) {
+      m_climber.setRightSpeed(rightClimberSpeed);
+    }
+    else {
+      m_climber.setRightSpeed(0.0);
     }
 
     if (m_currentlyLaunching) {
