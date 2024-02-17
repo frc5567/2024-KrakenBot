@@ -199,11 +199,11 @@ public class Robot extends TimedRobot {
        */
       if (ampLauncherOn) {
         m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
-        m_indexer.feedNote();
+        m_indexer.feedNoteAmp();
       }
       else if(speakerLauncherOn) {
         if (++m_launchCounter > 25) {
-          m_indexer.feedNote();
+          m_indexer.feedNoteSpeaker();
         }
         else {
           m_indexer.stop();
@@ -227,13 +227,13 @@ public class Robot extends TimedRobot {
          */
         if (ampLauncherOn) {
           m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
-          m_indexer.feedNote();
+          m_indexer.feedNoteAmp();
           m_intake.setSpeed(0.0);
           m_currentlyLaunching = true;
         }
         else if(speakerLauncherOn) {
           m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
-          m_indexer.feedNote();
+          m_indexer.feedNoteSpeaker();
           m_intake.setSpeed(0.0);
           m_currentlyLaunching = true;
         }

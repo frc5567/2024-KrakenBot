@@ -72,11 +72,19 @@ public class Indexer {
     }
 
     /**
-     * Helper method used to feed a note to the launcher.
+     * Helper method used to feed a note to the launcher for the amp.
      */
-    public void feedNote() {
+    public void feedNoteAmp() {
 
-        setIndexSpeed(RobotMap.IndexerConstants.FEED_SPEED);
+        setIndexSpeed(RobotMap.IndexerConstants.AMP_FEED_SPEED);
+    }
+
+    /**
+     * Helper method used to feed a note to the launcher for the speaker.
+     */
+    public void feedNoteSpeaker() {
+
+        setIndexSpeed(RobotMap.IndexerConstants.SPEAKER_FEED_SPEED);
     }
 
     /**
