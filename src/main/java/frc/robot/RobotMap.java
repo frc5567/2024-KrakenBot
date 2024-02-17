@@ -57,6 +57,17 @@ public class RobotMap {
     }
 
     /**
+     * All copilot controller constants
+     */
+    public static class CopilotControllerConstants {
+
+        /**
+         * USB port number of the copilot x-box controller
+         */
+        public static final int XBOX_CONTROLLER_USB_PORT = 1;
+    }
+
+    /**
      * All Indexer constants
      */
     public static class IndexerConstants {
