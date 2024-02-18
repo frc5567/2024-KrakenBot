@@ -116,24 +116,6 @@ public class PilotController {
     }
 
     /**
-     * Method used to obtain pilot input for moving the left climber.
-     * @return the state of the back button as a boolean. True if pressed, false if not pressed.
-     */
-    public boolean getLeftClimbButton() {
-        boolean leftClimbInput = m_controller.getBackButton();
-        return leftClimbInput;
-    }
-
-    /**
-     * Method used to obtain pilot input for moving the right climber.
-     * @return the state of the start button as a boolean. True if pressed, false if not pressed.
-     */
-    public boolean getRightClimbButton() {
-        boolean rightClimbInput = m_controller.getStartButton();
-        return rightClimbInput;
-    }
-
-    /**
      * Sets the desired direction of the drivetrain. The desired direction defaults to NoChange. 
      * When the right bumper is pressed the desired direction is set to the initial direction. 
      * When the left bumper is pressed the desired direction is set to the opposite direction. 

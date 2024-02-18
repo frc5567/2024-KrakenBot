@@ -57,6 +57,17 @@ public class RobotMap {
     }
 
     /**
+     * All copilot controller constants
+     */
+    public static class CopilotControllerConstants {
+
+        /**
+         * USB port number of the copilot x-box controller
+         */
+        public static final int XBOX_CONTROLLER_USB_PORT = 1;
+    }
+
+    /**
      * All Indexer constants
      */
     public static class IndexerConstants {
@@ -77,9 +88,14 @@ public class RobotMap {
         public static final double LOAD_SPEED = 0.5;
 
         /**
-         * Speed set to index motor for feeding note into launcher
+         * Speed set to index motor for feeding note into launcher for amp.
          */
-        public static final double FEED_SPEED = 1.0;
+        public static final double AMP_FEED_SPEED = 0.3;
+
+        /**
+         * Speed set to index motor for feeding note into launcher for speaker.
+         */
+        public static final double SPEAKER_FEED_SPEED = 1.0;
     }
 
     /**
@@ -128,11 +144,11 @@ public class RobotMap {
         /**
          * Speed set to left climber motor
          */
-        public static final double LEFT_SPEED = 0.3;
+        public static final double LEFT_SPEED = 0.5;
 
         /**
          * Speed set to the right climber motor
          */
-        public static final double RIGHT_SPEED = 0.3;
+        public static final double RIGHT_SPEED = 0.5;
     }
 }

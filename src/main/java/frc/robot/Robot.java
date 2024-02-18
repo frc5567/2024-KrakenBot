@@ -21,7 +21,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private Drivetrain m_drivetrain; 
-  private PilotController m_controller;
+  private PilotController m_pilotController;
+  private CopilotController m_copilotController;
   private Launcher m_launcher;
   private Intake m_intake;
   private Indexer m_indexer;
@@ -43,7 +44,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     m_drivetrain = new Drivetrain();
-    m_controller = new PilotController();
+    m_pilotController = new PilotController();
+    m_copilotController = new CopilotController();
     m_launcher = new Launcher();
     m_intake = new Intake();
     m_indexer = new Indexer();
@@ -123,8 +125,10 @@ public class Robot extends TimedRobot {
     boolean intakeOn = false;
     boolean haveNote = false;
     boolean expelOn = false;
-    boolean leftClimberOn = false;
-    boolean rightClimberOn = false;
+    boolean leftClimberExtending = false;
+    boolean rightClimberExtending = false;
+    boolean leftClimberRetracting = false;
+    boolean rightClimberRetracting = false;
 
     double leftLauncherAmpSpeed = 0.40;
     double rightLauncherAmpSpeed = 0.40;
@@ -140,20 +144,22 @@ public class Robot extends TimedRobot {
     
     PilotController.DesiredDirection desiredDirection = PilotController.DesiredDirection.NoChange;
 
-    curSpeed = m_controller.getDriverSpeed();
-    curTurn = m_controller.getDriverTurn();
+    curSpeed = m_pilotController.getDriverSpeed();
+    curTurn = m_pilotController.getDriverTurn();
 
-    curLT = -m_controller.getDriverLeftTank();
-    curRT = -m_controller.getDriverRightTank();
+    curLT = -m_pilotController.getDriverLeftTank();
+    curRT = -m_pilotController.getDriverRightTank();
 
-    ampLauncherOn = m_controller.getAmpLaunchButton();
-    speakerLauncherOn = m_controller.getSpeakerLaunchButton();
-    desiredDirection = m_controller.getPilotChangeControls();
-    intakeOn = m_controller.getIntakeButton();
+    ampLauncherOn = m_pilotController.getAmpLaunchButton();
+    speakerLauncherOn = m_pilotController.getSpeakerLaunchButton();
+    desiredDirection = m_pilotController.getPilotChangeControls();
+    intakeOn = m_pilotController.getIntakeButton();
     haveNote = m_indexer.readIndexSensor();
-    expelOn = m_controller.getExpelButton();
-    leftClimberOn = m_controller.getLeftClimbButton();
-    rightClimberOn = m_controller.getRightClimbButton();
+    expelOn = m_pilotController.getExpelButton();
+    leftClimberExtending = m_copilotController.getLeftClimbExtend();
+    rightClimberExtending = m_copilotController.getRightClimbExtend();
+    leftClimberRetracting = m_copilotController.getLeftClimbRetract();
+    rightClimberRetracting = m_copilotController.getRightClimbRetract();
 
     m_drivetrain.setDesiredDirection(desiredDirection);
     if (isTank) {
@@ -163,15 +169,21 @@ public class Robot extends TimedRobot {
       m_drivetrain.arcadeDrive(curSpeed, curTurn);
     }
 
-    if (leftClimberOn) {
+    if (leftClimberExtending) {
       m_climber.setLeftSpeed(leftClimberSpeed);
+    }
+    else if (leftClimberRetracting) {
+      m_climber.setLeftSpeed(-leftClimberSpeed);
     }
     else {
       m_climber.setLeftSpeed(0.0);
     }
 
-    if (rightClimberOn) {
+    if (rightClimberExtending) {
       m_climber.setRightSpeed(rightClimberSpeed);
+    }
+    else if (rightClimberRetracting) { 
+      m_climber.setRightSpeed(-rightClimberSpeed);
     }
     else {
       m_climber.setRightSpeed(0.0);
@@ -187,11 +199,11 @@ public class Robot extends TimedRobot {
        */
       if (ampLauncherOn) {
         m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
-        m_indexer.feedNote();
+        m_indexer.feedNoteAmp();
       }
       else if(speakerLauncherOn) {
         if (++m_launchCounter > 25) {
-          m_indexer.feedNote();
+          m_indexer.feedNoteSpeaker();
         }
         else {
           m_indexer.stop();
@@ -215,13 +227,13 @@ public class Robot extends TimedRobot {
          */
         if (ampLauncherOn) {
           m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
-          m_indexer.feedNote();
+          m_indexer.feedNoteAmp();
           m_intake.setSpeed(0.0);
           m_currentlyLaunching = true;
         }
         else if(speakerLauncherOn) {
           m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
-          m_indexer.feedNote();
+          m_indexer.feedNoteSpeaker();
           m_intake.setSpeed(0.0);
           m_currentlyLaunching = true;
         }
