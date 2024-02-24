@@ -130,8 +130,8 @@ public class Robot extends TimedRobot {
     boolean leftClimberRetracting = false;
     boolean rightClimberRetracting = false;
 
-    double leftLauncherAmpSpeed = 0.40;
-    double rightLauncherAmpSpeed = 0.40;
+    double leftLauncherAmpSpeed = 0.50;
+    double rightLauncherAmpSpeed = 0.50;
 
     //launcher speeds are offset for more predictable flight pattern
     double leftLauncherSpeakerSpeed = 0.95;
