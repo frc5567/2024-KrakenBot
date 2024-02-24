@@ -130,11 +130,11 @@ public class Robot extends TimedRobot {
     boolean leftClimberRetracting = false;
     boolean rightClimberRetracting = false;
 
-    double leftLauncherAmpSpeed = 0.40;
-    double rightLauncherAmpSpeed = 0.40;
+    double leftLauncherAmpSpeed = 0.50;
+    double rightLauncherAmpSpeed = 0.50;
 
     //launcher speeds are offset for more predictable flight pattern
-    double leftLauncherSpeakerSpeed = 0.80;
+    double leftLauncherSpeakerSpeed = 0.95;
     double rightLauncherSpeakerSpeed = 0.95;
 
     double intakeSpeed = 0.50;
@@ -202,7 +202,7 @@ public class Robot extends TimedRobot {
         m_indexer.feedNoteAmp();
       }
       else if(speakerLauncherOn) {
-        if (++m_launchCounter > 25) {
+        if (++m_launchCounter > 50) {
           m_indexer.feedNoteSpeaker();
         }
         else {
@@ -232,9 +232,13 @@ public class Robot extends TimedRobot {
           m_currentlyLaunching = true;
         }
         else if(speakerLauncherOn) {
+          if (++m_launchCounter > 50) {
+            m_indexer.feedNoteSpeaker();
+          }
+          else {
+            m_indexer.stop();
+          }
           m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
-          m_indexer.feedNoteSpeaker();
-          m_intake.setSpeed(0.0);
           m_currentlyLaunching = true;
         }
         else if(expelOn) {
