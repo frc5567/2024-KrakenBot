@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +34,8 @@ public class Robot extends TimedRobot {
 
   private int m_launchCounter = 0;
 
+  private UsbCamera m_camera;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -55,6 +59,17 @@ public class Robot extends TimedRobot {
 
     m_drivetrain.initDrivetrain();
     //System.out.print("Robot Init");
+
+    try {
+      m_camera = CameraServer.startAutomaticCapture();
+
+      m_camera.setResolution(160,120);
+      m_camera.setFPS(10);
+
+    } catch (Exception e){
+      System.out.println("Camera failed to instantiate");
+    }
+
   }
 
   /**
