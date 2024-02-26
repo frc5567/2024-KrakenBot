@@ -150,16 +150,16 @@ public class Robot extends TimedRobot {
     curLT = -m_pilotController.getDriverLeftTank();
     curRT = -m_pilotController.getDriverRightTank();
 
-    ampLauncherOn = m_pilotController.getAmpLaunchButton();
-    speakerLauncherOn = m_pilotController.getSpeakerLaunchButton();
+    ampLauncherOn = m_copilotController.getAmpLaunchButton();
+    speakerLauncherOn = m_copilotController.getSpeakerLaunchButton();
     desiredDirection = m_pilotController.getPilotChangeControls();
-    intakeOn = m_pilotController.getIntakeButton();
+    intakeOn = m_copilotController.getIntakeButton();
     haveNote = m_indexer.readIndexSensor();
-    expelOn = m_pilotController.getExpelButton();
-    leftClimberExtending = m_copilotController.getLeftClimbExtend();
-    rightClimberExtending = m_copilotController.getRightClimbExtend();
-    leftClimberRetracting = m_copilotController.getLeftClimbRetract();
-    rightClimberRetracting = m_copilotController.getRightClimbRetract();
+    expelOn = m_copilotController.getExpelButton();
+    // leftClimberExtending = m_copilotController.getLeftClimbExtend();
+    // rightClimberExtending = m_copilotController.getRightClimbExtend();
+    // leftClimberRetracting = m_copilotController.getLeftClimbRetract();
+    // rightClimberRetracting = m_copilotController.getRightClimbRetract();
 
     m_drivetrain.setDesiredDirection(desiredDirection);
     if (isTank) {
@@ -169,25 +169,25 @@ public class Robot extends TimedRobot {
       m_drivetrain.arcadeDrive(curSpeed, curTurn);
     }
 
-    if (leftClimberExtending) {
-      m_climber.setLeftSpeed(leftClimberSpeed);
-    }
-    else if (leftClimberRetracting) {
-      m_climber.setLeftSpeed(-leftClimberSpeed);
-    }
-    else {
-      m_climber.setLeftSpeed(0.0);
-    }
+    // if (leftClimberExtending) {
+    //   m_climber.setLeftSpeed(leftClimberSpeed);
+    // }
+    // else if (leftClimberRetracting) {
+    //   m_climber.setLeftSpeed(-leftClimberSpeed);
+    // }
+    // else {
+    //   m_climber.setLeftSpeed(0.0);
+    // }
 
-    if (rightClimberExtending) {
-      m_climber.setRightSpeed(rightClimberSpeed);
-    }
-    else if (rightClimberRetracting) { 
-      m_climber.setRightSpeed(-rightClimberSpeed);
-    }
-    else {
-      m_climber.setRightSpeed(0.0);
-    }
+    // if (rightClimberExtending) {
+    //   m_climber.setRightSpeed(rightClimberSpeed);
+    // }
+    // else if (rightClimberRetracting) { 
+    //   m_climber.setRightSpeed(-rightClimberSpeed);
+    // }
+    // else {
+    //   m_climber.setRightSpeed(0.0);
+    // }
 
     if (m_currentlyLaunching) {
       //System.out.println("currently launching");

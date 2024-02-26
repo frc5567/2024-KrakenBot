@@ -11,38 +11,74 @@ public class CopilotController {
     }
 
     /**
-     * Method used to obtain copilot input for retracting the right climber.
+     * Method used to obtain pilot input for launching to the amp.
      * @return the state of the A button as a boolean. True if pressed, false if not pressed.
      */
-    public boolean getRightClimbRetract() {
-        boolean rightClimbRetract = m_controller.getAButton();
-        return rightClimbRetract;
+    public boolean getAmpLaunchButton() {
+        boolean ampLauncherInput = m_controller.getAButton();
+        return ampLauncherInput;
     }
 
     /**
-     * Method used to obtain copilot input for retracting the left climber.
-     * @return the state of the X button as a boolean. True if pressed, false if not pressed.
-     */
-    public boolean getLeftClimbRetract() {
-        boolean leftClimbRetract = m_controller.getXButton();
-        return leftClimbRetract;
-    }
-
-    /**
-     * Method used to obtain copilot input for extending the right climber.
+     * Method used to obtain pilot input for launching to the speaker.
      * @return the state of the B button as a boolean. True if pressed, false if not pressed.
      */
-    public boolean getRightClimbExtend() {
-        boolean rightClimbExtend = m_controller.getBButton();
-        return rightClimbExtend;
+    public boolean getSpeakerLaunchButton() {
+        boolean speakerLauncherInput = m_controller.getBButton();
+        return speakerLauncherInput;
     }
 
     /**
-     * Method used to obtain copilot input for extending the left climber.
+     * Method used to obtain pilot input for intake.
+     * @return the state of the X button as a boolean. True if pressed, false if not pressed.
+     */
+    public boolean getIntakeButton() {
+        boolean intakeInput = m_controller.getXButton();
+        return intakeInput;
+    }
+
+    /**
+     * Method used to obtain pilot input for expelling.
      * @return the state of the Y button as a boolean. True if pressed, false if not pressed.
      */
-    public boolean getLeftClimbExtend() {
-        boolean leftClimbExtend = m_controller.getYButton();
-        return leftClimbExtend;
+    public boolean getExpelButton() {
+        boolean expelInput = m_controller.getYButton();
+        return expelInput;
     }
+
+    /**
+    //  * Method used to obtain copilot input for retracting the right climber.
+    //  * @return the state of the A button as a boolean. True if pressed, false if not pressed.
+    //  */
+    // public boolean getRightClimbRetract() {
+    //     boolean rightClimbRetract = m_controller.getAButton();
+    //     return rightClimbRetract;
+    // }
+
+    // /**
+    //  * Method used to obtain copilot input for retracting the left climber.
+    //  * @return the state of the X button as a boolean. True if pressed, false if not pressed.
+    //  */
+    // public boolean getLeftClimbRetract() {
+    //     boolean leftClimbRetract = m_controller.getXButton();
+    //     return leftClimbRetract;
+    // }
+
+    // /**
+    //  * Method used to obtain copilot input for extending the right climber.
+    //  * @return the state of the B button as a boolean. True if pressed, false if not pressed.
+    //  */
+    // public boolean getRightClimbExtend() {
+    //     boolean rightClimbExtend = m_controller.getBButton();
+    //     return rightClimbExtend;
+    // }
+
+    // /**
+    //  * Method used to obtain copilot input for extending the left climber.
+    //  * @return the state of the Y button as a boolean. True if pressed, false if not pressed.
+    //  */
+    // public boolean getLeftClimbExtend() {
+    //     boolean leftClimbExtend = m_controller.getYButton();
+    //     return leftClimbExtend;
+    // }
 }
