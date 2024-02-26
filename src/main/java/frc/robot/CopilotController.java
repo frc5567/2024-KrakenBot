@@ -3,11 +3,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class CopilotController {
-    private XboxController m_controller;
+    //private XboxController m_controller;
+    private GamePad m_controller;
 
     CopilotController() {
-        m_controller = new XboxController(RobotMap.CopilotControllerConstants.XBOX_CONTROLLER_USB_PORT);
-
+        //m_controller = new XboxController(RobotMap.CopilotControllerConstants.XBOX_CONTROLLER_USB_PORT);
+        m_controller = new GamePad(1);
     }
 
     /**
@@ -15,7 +16,7 @@ public class CopilotController {
      * @return the state of the A button as a boolean. True if pressed, false if not pressed.
      */
     public boolean getAmpLaunchButton() {
-        boolean ampLauncherInput = m_controller.getAButton();
+        boolean ampLauncherInput = m_controller.getRawButton(3);
         return ampLauncherInput;
     }
 
@@ -24,7 +25,7 @@ public class CopilotController {
      * @return the state of the B button as a boolean. True if pressed, false if not pressed.
      */
     public boolean getSpeakerLaunchButton() {
-        boolean speakerLauncherInput = m_controller.getBButton();
+        boolean speakerLauncherInput = m_controller.getRawButton(2);
         return speakerLauncherInput;
     }
 
@@ -33,7 +34,7 @@ public class CopilotController {
      * @return the state of the X button as a boolean. True if pressed, false if not pressed.
      */
     public boolean getIntakeButton() {
-        boolean intakeInput = m_controller.getXButton();
+        boolean intakeInput = m_controller.getRawButton(4);
         return intakeInput;
     }
 
@@ -42,7 +43,7 @@ public class CopilotController {
      * @return the state of the Y button as a boolean. True if pressed, false if not pressed.
      */
     public boolean getExpelButton() {
-        boolean expelInput = m_controller.getYButton();
+        boolean expelInput = m_controller.getRawButton(1);
         return expelInput;
     }
 
