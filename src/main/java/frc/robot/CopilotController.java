@@ -16,7 +16,7 @@ public class CopilotController {
      * @return the state of the A button as a boolean. True if pressed, false if not pressed.
      */
     public boolean getAmpLaunchButton() {
-        boolean ampLauncherInput = m_controller.getRawButton(3);
+        boolean ampLauncherInput = m_controller.getRawButton(5);
         return ampLauncherInput;
     }
 
@@ -25,7 +25,7 @@ public class CopilotController {
      * @return the state of the B button as a boolean. True if pressed, false if not pressed.
      */
     public boolean getSpeakerLaunchButton() {
-        boolean speakerLauncherInput = m_controller.getRawButton(2);
+        boolean speakerLauncherInput = m_controller.getRawButton(3);
         return speakerLauncherInput;
     }
 
@@ -34,7 +34,7 @@ public class CopilotController {
      * @return the state of the X button as a boolean. True if pressed, false if not pressed.
      */
     public boolean getIntakeButton() {
-        boolean intakeInput = m_controller.getRawButton(4);
+        boolean intakeInput = m_controller.getRawButton(12);
         return intakeInput;
     }
 
@@ -43,7 +43,7 @@ public class CopilotController {
      * @return the state of the Y button as a boolean. True if pressed, false if not pressed.
      */
     public boolean getExpelButton() {
-        boolean expelInput = m_controller.getRawButton(1);
+        boolean expelInput = m_controller.getRawButton(8);
         return expelInput;
     }
 
