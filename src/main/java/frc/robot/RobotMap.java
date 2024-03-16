@@ -75,7 +75,7 @@ public class RobotMap {
         /**
          * Percent output for turn to target when angle is greater than 8 degrees.
          */
-        public static final double LARGEST_ANGLE_SPEED = 0.12;
+        public static final double LARGEST_ANGLE_SPEED = 0.2;
 
         /**
          * Percent output for turn to target when angle is between 4 and 8 degrees.
@@ -320,12 +320,12 @@ public class RobotMap {
         /**
          * 90 degree turning angle.
          */
-        public static final double RIGHT_ANGLE = 90.0;
+        public static final double RIGHT_ANGLE = 86.0;
 
         /**
          * The distance to travel across the middle of the field to push notes.
          */
-        public static final double PUSH_DIST = 198.0;
+        public static final double PUSH_DIST = 258.0;
 
     }
 }

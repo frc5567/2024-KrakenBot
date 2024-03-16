@@ -307,11 +307,17 @@ public class Drivetrain {
 
         if ((Math.abs(m_pigeon.getYaw().getValueAsDouble() - angle) < (RobotMap.DrivetrainConstants.DRIVE_ANGLE_DEADBAND * 2))) {
             System.out.println("TurnToAngle completed!!!!!!!!");
+            m_rightLeader.setControl(new DutyCycleOut(0.0));
+            m_leftLeader.setControl(new DutyCycleOut(0.0));
+            m_leftFollower.setControl(new Follower(m_leftLeader.getDeviceID(), false));
+            m_rightFollower.setControl(new Follower(m_rightLeader.getDeviceID(), false));
             reachedTarget = true;
         }
 
         return reachedTarget;
     }
+
+
 
     /**
      * Sets up the PID configuration for drive straight (or turn)
@@ -339,8 +345,8 @@ public class Drivetrain {
 
         MotionMagicConfigs mm = m_rightConfig.MotionMagic;
 
-        mm.MotionMagicCruiseVelocity = 7.0;
-        mm.MotionMagicAcceleration = 10.0;
+        mm.MotionMagicCruiseVelocity = 10.0;
+        mm.MotionMagicAcceleration = 20.0;
         mm.MotionMagicJerk = 25.0;
 
         m_leftConfig.MotionMagic = mm;

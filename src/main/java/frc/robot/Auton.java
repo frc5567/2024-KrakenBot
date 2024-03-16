@@ -61,6 +61,14 @@ public class Auton {
             System.out.println("Setting Auton path to Front Two Note Exit.");
             m_path = m_currentPath;
         }
+        else if (m_currentPath == RobotMap.AutonConstants.RED_EVIL_GENIUS) {
+            System.out.println("Setting Auton path to Red Evil Genius.");
+            m_path = m_currentPath;
+        }
+        else if (m_currentPath == RobotMap.AutonConstants.BLUE_EVIL_GENIUS) {
+            System.out.println("Setting Auton path to Blue Evil Genius.");
+            m_path = m_currentPath;
+        }
         else {
             System.out.println("No path selected. Please restart auton and choose a path.");
         }
@@ -873,6 +881,18 @@ public class Auton {
                     {
                         System.out.println("Step: " + m_step);
 
+                        drivetrain.arcadeDrive(0.0, 0.0);
+
+                        if (++m_loopCount >= 3) {
+                            drivetrain.zeroDistance();
+                            m_step += 1;
+                        }
+                        break;
+                    }
+                    case 4:
+                    {
+                        System.out.println("Step: " + m_step);
+
                         //intake.expel();
                         if (drivetrain.driveStraight(RobotMap.AutonConstants.PUSH_DIST)) {
                             drivetrain.zeroDistance();
@@ -880,7 +900,7 @@ public class Auton {
                         }
                         break;
                     }
-                    case 4:
+                    case 5:
                     {
                         System.out.println("Step: " + m_step);
 
