@@ -320,7 +320,12 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
     double curSpeed = 0.0;
     double curTurn = 0.0;
-    m_drivetrain.arcadeDrive(curSpeed, curTurn);
+    boolean turnPIDOn = false;
+    //m_drivetrain.arcadeDrive(curSpeed, curTurn);
+    turnPIDOn = m_copilotController.getTurnPIDButton();
+    if( turnPIDOn) {
+      m_drivetrain.turnToAnglePID(30.0);
+    }
     //m_launcher.setSpeed(0.0, 0.0);
   }
 

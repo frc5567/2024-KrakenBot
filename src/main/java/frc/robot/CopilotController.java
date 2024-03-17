@@ -45,4 +45,13 @@ public class CopilotController {
         boolean leftClimbExtend = m_controller.getYButton();
         return leftClimbExtend;
     }
+
+      /**
+     * Method used to obtain pilot input for turning with PID.
+     * @return the state of the right bumper as a boolean. True if pressed, false if not pressed.
+     */
+    public boolean getTurnPIDButton() {
+        boolean turnPIDInput = m_controller.getRightBumper();
+        return turnPIDInput;
+    }
 }
