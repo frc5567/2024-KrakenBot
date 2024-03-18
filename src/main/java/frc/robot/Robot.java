@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,18 +17,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private Drivetrain m_drivetrain; 
   private PilotController m_pilotController;
   private CopilotController m_copilotController;
-  private Launcher m_launcher;
-  private Intake m_intake;
-  private Indexer m_indexer;
-  private Climber m_climber;
+  private Auton m_auton;
+  // private Launcher m_launcher;
+  // private Intake m_intake;
+  // private Indexer m_indexer;
+  // private Climber m_climber;
 
   private boolean m_currentlyLaunching;
 
@@ -39,17 +40,30 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    m_chooser.setDefaultOption(RobotMap.AutonConstants.FRONT_ONE_NOTE_EXIT, RobotMap.AutonConstants.FRONT_ONE_NOTE_EXIT);
+    m_chooser.addOption(RobotMap.AutonConstants.TURN_LEFT_ONE_NOTE_EXIT, RobotMap.AutonConstants.TURN_LEFT_ONE_NOTE_EXIT);
+    m_chooser.addOption(RobotMap.AutonConstants.TURN_RIGHT_ONE_NOTE_EXIT, RobotMap.AutonConstants.TURN_RIGHT_ONE_NOTE_EXIT);
+    m_chooser.addOption(RobotMap.AutonConstants.TURN_RIGHT_ONE_NOTE_PAUSE_EXIT, RobotMap.AutonConstants.TURN_RIGHT_ONE_NOTE_PAUSE_EXIT);
+    m_chooser.addOption(RobotMap.AutonConstants.TURN_LEFT_ONE_NOTE_PAUSE_EXIT, RobotMap.AutonConstants.TURN_LEFT_ONE_NOTE_PAUSE_EXIT);
+    m_chooser.addOption(RobotMap.AutonConstants.FRONT_TWO_NOTE_EXIT, RobotMap.AutonConstants.FRONT_TWO_NOTE_EXIT);
+    m_chooser.addOption(RobotMap.AutonConstants.TURN_LEFT_TWO_NOTE_EXIT, RobotMap.AutonConstants.TURN_LEFT_TWO_NOTE_EXIT);
+    m_chooser.addOption(RobotMap.AutonConstants.TURN_RIGHT_TWO_NOTE_EXIT, RobotMap.AutonConstants.TURN_RIGHT_TWO_NOTE_EXIT);
+    m_chooser.addOption(RobotMap.AutonConstants.RED_EVIL_GENIUS, RobotMap.AutonConstants.RED_EVIL_GENIUS);
+    m_chooser.addOption(RobotMap.AutonConstants.BLUE_EVIL_GENIUS, RobotMap.AutonConstants.BLUE_EVIL_GENIUS);
 
-    m_drivetrain = new Drivetrain();
+    SmartDashboard.putData("Auto choices", m_chooser);
+    m_autoSelected = m_chooser.getSelected();
+
+    Pigeon2 m_pigeon = new Pigeon2(RobotMap.DrivetrainConstants.PIGEON_CAN_ID);
+
+    m_drivetrain = new Drivetrain(m_pigeon);
     m_pilotController = new PilotController();
     m_copilotController = new CopilotController();
-    m_launcher = new Launcher();
-    m_intake = new Intake();
-    m_indexer = new Indexer();
-    m_climber = new Climber();
+    m_auton = new Auton();
+    // m_launcher = new Launcher();
+    // m_intake = new Intake();
+    // m_indexer = new Indexer();
+    // m_climber = new Climber();
 
     m_currentlyLaunching = false;
 
@@ -80,31 +94,29 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    m_auton.init();
+    m_auton.selectPath(m_autoSelected);
+    m_drivetrain.zeroSensors();
+    m_drivetrain.brakeMode();
     System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+    AutonInput currentInput;
+    currentInput = m_auton.periodic(m_drivetrain);
+    
+    if (currentInput.m_autonCompleted) {
+      m_drivetrain.arcadeDrive(0.0, 0.0);
     }
-
-    double curSpeed = 0.0;
-    double curTurn = 0.0;
-    m_drivetrain.arcadeDrive(curSpeed, curTurn);
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    m_drivetrain.brakeMode();
+  }
 
   /** This function is called periodically during operator control. */
   @Override
@@ -112,7 +124,7 @@ public class Robot extends TimedRobot {
     //System.out.println("Teleop Periodic");
 
     // set to false for arcade drive, true for tank drive
-    boolean isTank = false;
+    boolean isTank = true;
 
     double curSpeed = 0.0;
     double curTurn = 0.0;
@@ -150,151 +162,153 @@ public class Robot extends TimedRobot {
     curLT = -m_pilotController.getDriverLeftTank();
     curRT = -m_pilotController.getDriverRightTank();
 
-    ampLauncherOn = m_pilotController.getAmpLaunchButton();
-    speakerLauncherOn = m_pilotController.getSpeakerLaunchButton();
+    // ampLauncherOn = m_pilotController.getAmpLaunchButton();
+    // speakerLauncherOn = m_pilotController.getSpeakerLaunchButton();
     desiredDirection = m_pilotController.getPilotChangeControls();
-    intakeOn = m_pilotController.getIntakeButton();
-    haveNote = m_indexer.readIndexSensor();
-    expelOn = m_pilotController.getExpelButton();
-    leftClimberExtending = m_copilotController.getLeftClimbExtend();
-    rightClimberExtending = m_copilotController.getRightClimbExtend();
-    leftClimberRetracting = m_copilotController.getLeftClimbRetract();
-    rightClimberRetracting = m_copilotController.getRightClimbRetract();
+    // intakeOn = m_pilotController.getIntakeButton();
+    // haveNote = m_indexer.readIndexSensor();
+    // expelOn = m_pilotController.getExpelButton();
+    // leftClimberExtending = m_copilotController.getLeftClimbExtend();
+    // rightClimberExtending = m_copilotController.getRightClimbExtend();
+    // leftClimberRetracting = m_copilotController.getLeftClimbRetract();
+    // rightClimberRetracting = m_copilotController.getRightClimbRetract();
 
     m_drivetrain.setDesiredDirection(desiredDirection);
     if (isTank) {
       m_drivetrain.tankDrive(curLT, curRT);
     }
     else {
-      m_drivetrain.arcadeDrive(curSpeed, curTurn);
+      m_drivetrain.arcadeDrive(curSpeed, curTurn); 
     }
 
-    if (leftClimberExtending) {
-      m_climber.setLeftSpeed(leftClimberSpeed);
-    }
-    else if (leftClimberRetracting) {
-      m_climber.setLeftSpeed(-leftClimberSpeed);
-    }
-    else {
-      m_climber.setLeftSpeed(0.0);
-    }
+  //   if (leftClimberExtending) {
+  //     m_climber.setLeftSpeed(leftClimberSpeed);
+  //   }
+  //   else if (leftClimberRetracting) {
+  //     m_climber.setLeftSpeed(-leftClimberSpeed);
+  //   }
+  //   else {
+  //     m_climber.setLeftSpeed(0.0);
+  //   }
 
-    if (rightClimberExtending) {
-      m_climber.setRightSpeed(rightClimberSpeed);
-    }
-    else if (rightClimberRetracting) { 
-      m_climber.setRightSpeed(-rightClimberSpeed);
-    }
-    else {
-      m_climber.setRightSpeed(0.0);
-    }
+  //   if (rightClimberExtending) {
+  //     m_climber.setRightSpeed(rightClimberSpeed);
+  //   }
+  //   else if (rightClimberRetracting) { 
+  //     m_climber.setRightSpeed(-rightClimberSpeed);
+  //   }
+  //   else {
+  //     m_climber.setRightSpeed(0.0);
+  //   }
 
-    if (m_currentlyLaunching) {
-      //System.out.println("currently launching");
+  //   if (m_currentlyLaunching) {
+  //     //System.out.println("currently launching");
 
-      /**
-       * If we are launching to the amp, set the speed of the launch motors to amp speed and feed the note from indexer.
-       * Else if we are launching to the speaker, set the speed of the launch motors to speaker speed and feed note from indexer.
-       * If we are not launching, set launcher and indexer speed to 0.
-       */
-      if (ampLauncherOn) {
-        m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
-        m_indexer.feedNoteAmp();
-      }
-      else if(speakerLauncherOn) {
-        if (++m_launchCounter > 50) {
-          m_indexer.feedNoteSpeaker();
-        }
-        else {
-          m_indexer.stop();
-        }
-        m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
+  //     /**
+  //      * If we are launching to the amp, set the speed of the launch motors to amp speed and feed the note from indexer.
+  //      * Else if we are launching to the speaker, set the speed of the launch motors to speaker speed and feed note from indexer.
+  //      * If we are not launching, set launcher and indexer speed to 0.
+  //      */
+  //     if (ampLauncherOn) {
+  //       m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
+  //       m_indexer.feedNoteAmp();
+  //     }
+  //     else if(speakerLauncherOn) {
+  //       if (++m_launchCounter > 50) {
+  //         m_indexer.feedNoteSpeaker();
+  //       }
+  //       else {
+  //         m_indexer.stop();
+  //       }
+  //       m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
 
-      }
-      else {
-        m_launcher.setSpeed(0.0, 0.0);
-        m_currentlyLaunching = false;
-        m_indexer.stop();
-      }
-    }
-    else {
-      if (haveNote) {
-        /**
-         * If we are launching to the amp, set the speed of the launch motors to amp speed and feed the note from indexer. m_currentlyLaunching is set to true.
-         * Else if we are launching to the speaker, set the speed of the launch motors to speaker speed and feed note from indexer. m_currentlyLaunching is set to true.
-         * Else if we are expelling, set launcher, index, and intake speeds to expel speeds.
-         * If we are not launching or expelling, set launcher, indexer, and intake speed to 0. m_currentlyLaunching is set to false.
-         */
-        if (ampLauncherOn) {
-          m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
-          m_indexer.feedNoteAmp();
-          m_intake.setSpeed(0.0);
-          m_currentlyLaunching = true;
-        }
-        else if(speakerLauncherOn) {
-          if (++m_launchCounter > 50) {
-            m_indexer.feedNoteSpeaker();
-          }
-          else {
-            m_indexer.stop();
-          }
-          m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
-          m_currentlyLaunching = true;
-        }
-        else if(expelOn) {
-          m_launcher.setSpeed(-leftLauncherAmpSpeed, -rightLauncherAmpSpeed);
-          m_indexer.expelNote();
-          m_intake.setSpeed(-intakeSpeed);
-        } 
-        else {
-          m_launcher.setSpeed(0.0, 0.0);
-          m_indexer.stop();
-          m_intake.setSpeed(0.0);
-          m_currentlyLaunching = false;
-        }
-      }
-      else{
-          //System.out.println("Not launching\n");
+  //     }
+  //     else {
+  //       m_launcher.setSpeed(0.0, 0.0);
+  //       m_currentlyLaunching = false;
+  //       m_indexer.stop();
+  //     }
+  //   }
+  //   else {
+  //     if (haveNote) {
+  //       /**
+  //        * If we are launching to the amp, set the speed of the launch motors to amp speed and feed the note from indexer. m_currentlyLaunching is set to true.
+  //        * Else if we are launching to the speaker, set the speed of the launch motors to speaker speed and feed note from indexer. m_currentlyLaunching is set to true.
+  //        * Else if we are expelling, set launcher, index, and intake speeds to expel speeds.
+  //        * If we are not launching or expelling, set launcher, indexer, and intake speed to 0. m_currentlyLaunching is set to false.
+  //        */
+  //       if (ampLauncherOn) {
+  //         m_launcher.setSpeed(leftLauncherAmpSpeed, rightLauncherAmpSpeed);
+  //         m_indexer.feedNoteAmp();
+  //         m_intake.setSpeed(0.0);
+  //         m_currentlyLaunching = true;
+  //       }
+  //       else if(speakerLauncherOn) {
+  //         if (++m_launchCounter > 50) {
+  //           m_indexer.feedNoteSpeaker();
+  //         }
+  //         else {
+  //           m_indexer.stop();
+  //         }
+  //         m_launcher.setSpeed(leftLauncherSpeakerSpeed, rightLauncherSpeakerSpeed);
+  //         m_currentlyLaunching = true;
+  //       }
+  //       else if(expelOn) {
+  //         m_launcher.setSpeed(-leftLauncherAmpSpeed, -rightLauncherAmpSpeed);
+  //         m_indexer.expelNote();
+  //         m_intake.setSpeed(-intakeSpeed);
+  //       } 
+  //       else {
+  //         m_launcher.setSpeed(0.0, 0.0);
+  //         m_indexer.stop();
+  //         m_intake.setSpeed(0.0);
+  //         m_currentlyLaunching = false;
+  //       }
+  //     }
+  //     else{
+  //         //System.out.println("Not launching\n");
 
-        /**
-         * If intakeOn is true, sets the speed of the intake, sets indexer to note loading speed, and sets launcher speed to 0.
-         * Else if we are expelling, set launcher, index, and intake speeds to expel speeds.
-         * If we are not intaking or expelling, sets the launcher, index, and intake speeds to 0.
-         */
-        if (intakeOn) {
-          m_intake.setSpeed(intakeSpeed);
-          m_launcher.setSpeed(0.0, 0.0);
-          m_indexer.loadNote();
+  //       /**
+  //        * If intakeOn is true, sets the speed of the intake, sets indexer to note loading speed, and sets launcher speed to 0.
+  //        * Else if we are expelling, set launcher, index, and intake speeds to expel speeds.
+  //        * If we are not intaking or expelling, sets the launcher, index, and intake speeds to 0.
+  //        */
+  //       if (intakeOn) {
+  //         m_intake.setSpeed(intakeSpeed);
+  //         m_launcher.setSpeed(0.0, 0.0);
+  //         m_indexer.loadNote();
           
-          //System.out.println("Currently intaking");
-        }
-        else if(expelOn) {
-          m_launcher.setSpeed(-leftLauncherAmpSpeed, -rightLauncherAmpSpeed);
-          m_indexer.expelNote();
-          m_intake.setSpeed(-intakeSpeed);
-        }
-        else {
-          m_intake.setSpeed(0.0);
-          m_indexer.stop();
-          m_launcher.setSpeed(0.0, 0.0);
-        }
-      }
-      m_launchCounter = 0;
-    }
+  //         //System.out.println("Currently intaking");
+  //       }
+  //       else if(expelOn) {
+  //         m_launcher.setSpeed(-leftLauncherAmpSpeed, -rightLauncherAmpSpeed);
+  //         m_indexer.expelNote();
+  //         m_intake.setSpeed(-intakeSpeed);
+  //       }
+  //       else {
+  //         m_intake.setSpeed(0.0);
+  //         m_indexer.stop();
+  //         m_launcher.setSpeed(0.0, 0.0);
+  //       }
+  //     }
+  //     m_launchCounter = 0;
+  //   }
    
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_drivetrain.coastMode();
+  }
 
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    double curSpeed = 0.0;
-    double curTurn = 0.0;
-    m_drivetrain.arcadeDrive(curSpeed, curTurn);
-    m_launcher.setSpeed(0.0, 0.0);
+    // double curSpeed = 0.0;
+    // double curTurn = 0.0;
+    // m_drivetrain.arcadeDrive(curSpeed, curTurn);
+    //m_launcher.setSpeed(0.0, 0.0);
   }
 
   /** This function is called once when test mode is enabled. */
@@ -307,7 +321,7 @@ public class Robot extends TimedRobot {
     double curSpeed = 0.0;
     double curTurn = 0.0;
     m_drivetrain.arcadeDrive(curSpeed, curTurn);
-    m_launcher.setSpeed(0.0, 0.0);
+    //m_launcher.setSpeed(0.0, 0.0);
   }
 
   /** This function is called once when the robot is first started up. */
@@ -320,6 +334,6 @@ public class Robot extends TimedRobot {
     double curSpeed = 0.0;
     double curTurn = 0.0;
     m_drivetrain.arcadeDrive(curSpeed, curTurn);
-    m_launcher.setSpeed(0.0, 0.0);
+    //m_launcher.setSpeed(0.0, 0.0);
   }
 }
