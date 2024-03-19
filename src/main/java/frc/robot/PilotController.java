@@ -48,18 +48,18 @@ public class PilotController {
 
     public double getDriverLeftTank() {
         double speed = m_controller.getLeftY();
-        double squaredInput = speed * speed;
+        double squaredInput = speed;
         squaredInput = Math.copySign(squaredInput, speed);
         speed = m_accelLTFilter.calculate(squaredInput);
-        return adjustForDeadband(speed);
+        return adjustForDeadband(speed*0.75);
     }
 
     public double getDriverRightTank() {
         double speed = m_controller.getRightY();
-        double squaredInput = speed * speed;
+        double squaredInput = speed;
         squaredInput = Math.copySign(squaredInput, speed);        
         speed = m_accelRTFilter.calculate(squaredInput);
-        return adjustForDeadband(speed);
+        return adjustForDeadband(speed*0.75);
     }
     
     /**
